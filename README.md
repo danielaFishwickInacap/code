@@ -14,6 +14,8 @@
 
 Este repositorio contiene el análisis y reporte en R Markdown (`final_assigment.Rmd`) de un estudio sobre la adicción a las redes sociales en estudiantes universitarios. El informe explora cómo el uso de redes sociales impacta la vida académica, la salud mental y las relaciones interpersonales de los encuestados. 🤳📚
 
+**Para visualizar el reporte en html, dirígete 💁‍♀️ *[aquí](https://danielafishwickinacap.github.io/code/final_assigment.html)***
+
 ## Resumen del Análisis 🧐
 
 El análisis abarca 13 variables principales del dataset, incluyendo edad, género, nivel académico, horas promedio de uso diario, impacto percibido en el rendimiento académico, horas de sueño, puntuación de salud mental, número de conflictos relacionados con redes sociales, tiempo promedio entre usos, plataforma más utilizada, cantidad de plataformas usadas y estado de relación.
