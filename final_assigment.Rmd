@@ -1,0 +1,1737 @@
+---
+title: Informe Final del Estudio sobre Adicción a las Redes Sociales
+author: "Daniela Fishwick"
+date: "07/03/2025"
+output: html_document
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+options(digits = 4) # Para mostrar los resultados con 4 decimales
+# Cargar el conjunto de datos
+df <- read.csv("dataset/social_media_addiction.csv", sep = ";", dec = ".")
+head(df) # Mostrar las primeras filas del dataset para verificar que se ha cargado correctamente
+```
+## **Introducción**
+
+El presente informe tiene como objetivo analizar los resultados de un estudio sobre la adicción a las redes sociales, realizado entre estudiantes universitarios. El estudio se llevó a cabo mediante una encuesta que recopiló datos sobre el uso de redes sociales, su impacto en la vida académica y laboral, y otros factores relacionados con la salud mental y el bienestar.
+El dataset contiene información de 641 encuestados, con variables que abarcan desde el tiempo promedio de uso diario de redes sociales hasta el estado de relación de los participantes. Este informe se centrará en el análisis descriptivo y la exploración de las variables recabadas en el estudio.
+Además, se realizarán pruebas de normalidad y visualizaciones para cada variable, con el fin de determinar si se ajustan a distribuciones conocidas y si son adecuadas para análisis estadísticos posteriores.
+Finalmente, se presentarán conclusiones y recomendaciones basadas en los hallazgos del estudio.
+
+
+## **Objetivos del Estudio**
+
+El objetivo principal de este estudio es evaluar el impacto del uso de redes sociales en la vida académica y laboral de los estudiantes universitarios, así como identificar patrones de uso y posibles consecuencias negativas asociadas. 
+
+Los objetivos específicos incluyen:
+
+1. Determinar la cantidad promedio de horas que los estudiantes pasan en redes sociales diariamente.
+2. Evaluar si el uso de redes sociales afecta el rendimiento académico y laboral.
+3. Analizar la relación entre el uso de redes sociales y la salud mental de los estudiantes.
+4. Identificar las plataformas de redes sociales más utilizadas por los estudiantes.
+5. Explorar la relación entre el estado de relación de los estudiantes y su uso de redes sociales.
+
+## **Variables**
+El dataset obtenido del estudio contiene las siguientes trece variables:
+
+| Variable | Tipo | Descripción |
+| ----- | ----- | ----- |
+| **Student\_ID** | Integer | Identificador único del encuestado |
+| **Age** | Integer | Edad en años |
+| **Gender** | Categórico | M, F, Otro |
+| **Academic\_Level** | Categórico | Educación media / Pregrado / Postgrado |
+| **Avg\_Daily\_Usage\_Hours** | Float | Promedio de horas por día de uso en redes sociales |
+| **Affects\_Performance** | Boolean | Impacto en lo académico/laboral (Sí/No) |
+| **Sleep\_Hours\_Per\_Night** | Float | Promedio de horas de sueño por noche |
+| **Mental\_Health\_Score** | Integer | Número de ocasiones en la última semana, con estado de ánimo afectado negativamente por las redes sociales |
+| **Conflicts\_Over\_Social\_Media** | Integer | Número de conflictos en el último mes, con relaciones interpersonales debido a las redes sociales |
+| **Avg\_Time\_Between\_Usage\_Min** | Float | Tiempo promedio en minutos entre usos de redes sociales |
+| **Most\_Used\_Platform** | Categórico | Instagram, Facebook, TikTok, WhatsApp, Otra. |
+| **How\_Many\_Platform** | Integer | Número de plataformas utilizadas |
+| **Relationship\_Status** | Boolean | Relación de pareja (Sí/No) |
+
+
+## **Análisis de Datos**
+Se realizarán los análisis a cada una de las variables mostradas anteriormente. El tipo de análisis que se realizará a cada una de ellas fue definido en el informe previo de Diseño de la Encuesta.
+
+## **1. Análisis de la variable "Edad"**
+El tipo de variable "Edad" es cuantitativa continua, ya que representa un valor numérico que puede tomar cualquier valor dentro de un rango. En este caso, la variable "Edad" se analizará utilizando la distribución normal, dado que se espera que la edad de los encuestados siga una distribución aproximadamente normal en una población grande.
+
+### **Análisis descriptivo**
+
+```{r}
+# Extraer la columna 'Age'
+age_data <- df$Age
+
+# Calcular estadísticas descriptivas
+age_summary <- summary(age_data)
+min_age <- age_summary["Min."]
+max_age <- age_summary["Max."]
+age_length <- length(age_data)
+age_mean <- mean(age_data)
+age_sd <- sd(age_data)
+age_median <- median(age_data)
+
+cat("--- Estadísticas Descriptivas para 'Edad' ---\n")
+print(age_summary)
+cat(paste("Edad Promedio (mean):", round(age_mean, 4), "\n"))
+cat(paste("Desviación Estándar (sd):", round(age_sd, 4), "\n"))
+cat(paste("Mediana:", round(age_median, 4), "\n"))
+```
+
+**Interpretación:**
+
+Los resultados indican que la **edad promedio** de los encuestados es de aproximadamente `r age_mean` años, con una desviación estándar de `r age_sd` años. El 50% de los encuestados tiene `r age_median` años o menos (mediana), y el rango de edades en la muestra es de `r min_age` a `r max_age` años. La concentración de datos alrededor de la media y la baja desviación estándar sugieren una población estudiantil con edades relativamente uniformes.
+
+#### **Visualización: Histograma de Edad**
+
+Un histograma nos ayuda a visualizar la distribución de la variable `Edad`.
+
+```{r fig.width=10, fig.height=6}
+# Crear un histograma de la edad
+hist(age_data,
+     main = "Distribución de la Edad",
+     xlab = "Edad (Años)",
+     ylab = "Frecuencia",
+     col = "skyblue",
+     border = "black",
+     breaks = 10 # Número de barras
+     )
+```
+
+#### **Visualización: Diagrama de Caja (Box Plot) de Edad**
+
+Un diagrama de caja es útil para identificar la dispersión de los datos y posibles valores atípicos (outliers).
+
+```{r fig.width=6, fig.height=8}
+# Crear un diagrama de caja de la edad
+boxplot(age_data,
+        main = "Diagrama de Caja de la Edad",
+        ylab = "Edad (Años)",
+        col = "lightcoral",
+        border = "darkred"
+        )
+```
+
+**Interpretación de las Visualizaciones:**
+
+El **histograma** muestra que la mayoría de los encuestados se concentran en el rango de 18 a 22 años, lo cual es coherente con una población de estudiantes universitarios jóvenes. La forma de la distribución parece relativamente simétrica, aunque con una ligera inclinación. El **diagrama de caja** confirma que no hay valores atípicos significativos y que los datos están bastante agrupados, lo que indica una muestra homogénea en términos de edad.
+
+```{r}
+# Cargar paquetes necesarios para el análisis de normalidad
+# install.packages("nortest") # Para la prueba de Lilliefors
+library(nortest) # Para el test de Lilliefors
+```
+
+### **Análisis de Normalidad de la Variable 'Edad'**
+
+Este análisis tiene como objetivo evaluar si la variable `Edad` sigue una distribución normal, para así posteriormente aplicar los cálculos de distribución normal revisados en el curso.
+```{r}
+cat("Tamaño de la muestra (N):", age_length, "\n")
+cat("Media de la edad:", age_mean, "\n")
+cat("Desviación Estándar de la edad:", age_sd, "\n")
+```
+
+**Interpretación:**
+
+Con un tamaño de muestra de `r age_length`, la media es aproximadamente `r age_mean` años y la desviación estándar es de `r age_sd` años.
+
+#### **Pruebas de Normalidad**
+
+Se realizarán pruebas estadísticas para evaluar la hipótesis nula de que los datos provienen de una distribución normal.
+
+##### **a) Prueba de Shapiro-Wilk**
+
+Esta prueba es adecuada para tamaños de muestra pequeños a moderados (generalmente N < 5000).
+
+  * **Hipótesis Nula ($H_0$):** Los datos se distribuyen normalmente.
+  * **Hipótesis Alternativa ($H_1$):** Los datos no se distribuyen normalmente.
+
+```{r}
+# Prueba de Shapiro-Wilk
+shapiro_test <- shapiro.test(age_data)
+cat("--- Prueba de Shapiro-Wilk ---\n")
+print(shapiro_test)
+```
+
+**Interpretación:**
+
+Dado que el p-valor es mucho menor que el nivel de significancia común (e.g., alpha = 0.05), **rechazamos la hipótesis nula**. Esto sugiere que la variable `Edad` **no sigue una distribución normal** según la prueba de Shapiro-Wilk.
+
+##### **b) Prueba de Kolmogorov-Smirnov (Lilliefors)**
+
+Esta prueba es una alternativa para tamaños de muestra más grandes.
+
+  * **Hipótesis Nula ($H_0$):** Los datos se distribuyen normalmente.
+  * **Hipótesis Alternativa ($H_1$):** Los datos no se distribuyen normalmente.
+
+```{r}
+# Prueba de Lilliefors (una adaptación de Kolmogorov-Smirnov para cuando la media y varianza son desconocidas)
+lillie_test <- lillie.test(age_data)
+cat("\n--- Prueba de Lilliefors (Kolmogorov-Smirnov) ---\n")
+print(lillie_test)
+```
+
+**Interpretación:**
+
+Similar a la prueba de Shapiro-Wilk, el p-valor es significativamente menor que alpha = 0.05. Por lo tanto, **rechazamos la hipótesis nula**, lo que refuerza la conclusión de que la variable `Edad` **no se distribuye normalmente**.
+
+#### **Visualización de la Normalidad**
+
+Las visualizaciones son cruciales para complementar las pruebas estadísticas y obtener una comprensión de la forma de la distribución.
+
+##### **a) Histograma con Curva de Densidad Normal**
+
+Se superpone una curva de densidad normal teórica (con la media y desviación estándar de la variable `Edad`) sobre el histograma de la edad.
+
+```{r fig.width=10, fig.height=6}
+# Calcular la densidad de la distribución normal teórica
+x_vals <- seq(min(age_data), max(age_data), length.out = 100)
+normal_density <- dnorm(x_vals, mean = mean(age_data), sd = sd(age_data))
+
+# Escalar la densidad normal para que se ajuste a la altura del histograma
+hist_info <- hist(age_data, plot = FALSE, breaks = 10) # Obtener información del histograma sin plotearlo
+hist_max_freq <- max(hist_info$counts)
+hist_max_density <- max(hist_info$density)
+scale_factor <- hist_max_freq / hist_max_density
+
+# Crear el histograma
+hist(age_data,
+     main = "Distribución de la Edad con Curva Normal Superpuesta",
+     xlab = "Edad (Años)",
+     ylab = "Frecuencia",
+     col = "skyblue",
+     border = "black",
+     breaks = 10,
+     freq = TRUE # Asegurarse de que el eje y sea frecuencia
+     )
+
+# Añadir la curva de densidad normal escalada
+lines(x_vals, normal_density * scale_factor, col = "red", lwd = 2)
+legend("topright", legend = "Curva Normal Teórica", col = "red", lwd = 2)
+```
+
+**Interpretación:**
+
+Visualmente, el histograma de la edad muestra una forma que se asemeja a una campana, pero la curva normal superpuesta revela que las colas de la distribución de `Edad` son más cortas y el pico es más pronunciado de lo que se esperaría en una distribución normal perfecta.
+
+##### **b) Gráfico Cuantil-Cuantil (Q-Q Plot)**
+
+Un Q-Q plot compara los cuantiles de tus datos con los cuantiles teóricos de una distribución normal. Si los puntos caen cerca de la línea diagonal, los datos se distribuyen normalmente.
+
+```{r fig.width=8, fig.height=8}
+# Crear un Q-Q plot
+qqnorm(age_data, main = "Q-Q Plot de la Edad")
+qqline(age_data, col = "blue", lwd = 2)
+```
+
+**Interpretación:**
+
+En el Q-Q plot, observamos que los puntos se desvían de la línea recta en los extremos superior e inferior. Esta desviación indica que la distribución de la edad no sigue perfectamente una distribución normal. Las desviaciones en las colas sugieren que hay menos valores extremos de lo que una distribución normal predeciría (lo que se alinea con una curtosis negativa).
+
+#### **Conclusión del Análisis de Normalidad**
+
+Basado en las pruebas estadísticas (Shapiro-Wilk y Lilliefors) y las visualizaciones (histograma y Q-Q plot), se puede concluir que la variable `Edad` en este conjunto de datos **no sigue una distribución normal**. Las pruebas estadísticas arrojaron p-valores extremadamente bajos, lo que lleva al rechazo de la hipótesis de normalidad. Las visualizaciones confirman que, aunque la distribución tiene una forma algo parecida a una campana, no se ajusta a los supuestos de una distribución normal perfecta, especialmente en las colas.
+
+---
+
+## **2. Análisis de la Variable 'Gender'**
+
+Este análisis explorará la distribución y características de la variable `Gender` (Género). Dado que `Gender` es una variable cualitativa nominal, el análisis se centrará en las frecuencias y proporciones.
+
+### **Frecuencias Absolutas y Relativas**
+
+```{r}
+# Extraer la columna 'Gender'
+gender_data <- df$Gender
+
+# Limpiar y estandarizar los datos de género (convertir a minúsculas y quitar espacios)
+gender_data <- tolower(trimws(gender_data))
+
+# Convertir a factor para un mejor manejo de categorías
+gender_data <- factor(gender_data)
+
+cat("--- Resumen de la Variable Gender ---\n")
+print(summary(gender_data))
+cat("\n")
+
+# Calcular la tabla de frecuencias
+gender_counts <- table(gender_data)
+cat("Frecuencias Absolutas:\n")
+print(gender_counts)
+cat("\n")
+
+# Calcular las proporciones (frecuencias relativas)
+gender_proportions <- prop.table(gender_counts)
+cat("Frecuencias Relativas (Proporciones):\n")
+print(gender_proportions)
+cat("\n")
+
+# Calcular el número total de encuestados
+total_respondents <- length(gender_data)
+cat(paste("Número total de encuestados:", total_respondents, "\n"))
+```
+
+**Interpretación:**
+
+De un total de `r total_respondents` encuestados, `r gender_counts["female"]` se identifican como 'female' (femenino) y `r gender_counts["male"]` como 'male' (masculino). Esto representa aproximadamente el `r gender_proportions["female"]*100`% de la muestra para 'female' y el `r gender_proportions["male"]*100`% para 'male'. No se encontraron otras categorías de género en los datos después de la limpieza. Esto indica una ligera mayoría de encuestados masculinos en la muestra.
+
+### **Visualización: Gráfico de Barras (Bar Plot) de Género**
+
+Un gráfico de barras es la visualización más adecuada para variables cualitativas, ya que muestra la frecuencia o proporción de cada categoría.
+
+```{r fig.width=8, fig.height=6}
+# Cargar paquetes necesarios para gráficos
+# install.packages("ggplot2")
+library(ggplot2)
+
+# Crear un data frame para ggplot2
+gender_df <- as.data.frame(gender_counts)
+colnames(gender_df) <- c("Gender", "Count")
+
+# Crear el gráfico de barras con ggplot2
+ggplot(gender_df, aes(x = Gender, y = Count, fill = Gender)) +
+  geom_bar(stat = "identity", color = "black") +
+  geom_text(aes(label = Count), vjust = -0.5, size = 4) + # Añadir etiquetas de conteo
+  labs(title = "Distribución de Género de los Encuestados",
+       x = "Género",
+       y = "Número de Encuestados") +
+  scale_fill_manual(values = c("female" = "lightpink", "male" = "lightblue")) + # Colores personalizados
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5)) # Centrar título
+```
+
+**Interpretación de la Visualización:**
+
+El gráfico de barras confirma visualmente que hay más encuestados masculinos que femeninos en la muestra. Esta visualización es clara y concisa para una variable nominal como el género.
+
+### **Conclusión del Análisis de Género**
+
+La variable `Gender` es una variable cualitativa nominal que muestra una distribución de `r gender_proportions["female"]*100`% de encuestados femeninos y `r gender_proportions["male"]*100`% de encuestados masculinos. Esta información es fundamental para comprender la composición demográfica de la muestra y puede ser relevante al analizar cómo otras variables (como el uso de redes sociales o la salud mental) pueden diferir entre los géneros. Al ser una variable nominal, no se asocia a una distribución de probabilidad específica en el contexto de análisis de variables aleatorias continuas o discretas como las vistas anteriormente.
+
+
+---
+
+## **3. Análisis de la Variable 'Academic\_Level'**
+
+Este análisis explorará la distribución y características de la variable `Academic_Level` (Nivel Académico). Como se identificó previamente, esta es una variable cualitativa ordinal, por lo que el análisis se centrará en las frecuencias y proporciones de cada categoría ordenada.
+
+### **Frecuencias Absolutas y Relativas**
+
+```{r}
+# Extraer la columna 'Academic_Level'
+academic_level_data <- df$Academic_Level
+
+# Limpiar y estandarizar los datos (convertir a minúsculas y quitar espacios)
+academic_level_data <- tolower(trimws(academic_level_data))
+
+# Definir el orden correcto de las categorías para la variable ordinal
+# Asegúrate de que estos nombres coincidan con los valores limpios de tu dataset
+level_order <- c("ed. media", "universitario", "titulado")
+
+# Convertir a factor ordenado
+academic_level_data <- factor(academic_level_data, levels = level_order, ordered = TRUE)
+
+cat("--- Resumen de la Variable Academic_Level ---\n")
+print(summary(academic_level_data))
+cat("\n")
+
+# Calcular la tabla de frecuencias
+academic_level_counts <- table(academic_level_data)
+cat("Frecuencias Absolutas:\n")
+print(academic_level_counts)
+cat("\n")
+
+# Calcular las proporciones (frecuencias relativas)
+academic_level_proportions <- prop.table(academic_level_counts)
+cat("Frecuencias Relativas (Proporciones):\n")
+print(academic_level_proportions)
+cat("\n")
+
+# Calcular el número total de encuestados
+total_respondents <- length(academic_level_data)
+cat(paste("Número total de encuestados:", total_respondents, "\n"))
+```
+
+**Interpretación:**
+
+De un total de 641 encuestados:
+
+  * `r academic_level_counts["ed. media"]` (`r academic_level_proportions["ed. media"]*100`%) están en el nivel de 'ed. media' (educación media).
+  * `r academic_level_counts["universitario"]` (`r academic_level_proportions["universitario"]*100`%) están en el nivel de 'universitario' (pregrado).
+  * `r academic_level_counts["titulado"]` (`r academic_level_proportions["titulado"]*100`%) están en el nivel de 'titulado' (posgrado).
+
+Esto indica que la muestra está distribuida con una ligera mayoría en el nivel de pregrado y una minoría en el nivel de educación media.
+
+### **Visualización: Gráfico de Barras de Nivel Académico**
+
+Un gráfico de barras es la visualización más adecuada para variables cualitativas, especialmente cuando son ordinales, ya que permite mostrar la distribución de las categorías en su orden inherente.
+
+```{r fig.width=9, fig.height=6}
+# Crear un data frame para ggplot2
+academic_level_df <- as.data.frame(academic_level_counts)
+colnames(academic_level_df) <- c("Academic_Level", "Count")
+
+# Crear el gráfico de barras con ggplot2, manteniendo el orden
+ggplot(academic_level_df, aes(x = Academic_Level, y = Count, fill = Academic_Level)) +
+  geom_bar(stat = "identity", color = "black") +
+  geom_text(aes(label = Count), vjust = -0.5, size = 4) + # Añadir etiquetas de conteo
+  labs(title = "Distribución del Nivel Académico de los Encuestados",
+       x = "Nivel Académico",
+       y = "Número de Encuestados") +
+  scale_fill_brewer(palette = "Paired") + # Usar una paleta de colores
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5)) # Centrar título
+```
+
+**Interpretación de la Visualización:**
+
+El gráfico de barras confirma visualmente las proporciones calculadas, mostrando la cantidad de encuestados en cada nivel académico en el orden correcto. Se puede apreciar que los niveles de pregrado y posgrado tienen una mayor representación en esta muestra.
+
+### **Conclusión del Análisis de Nivel Académico**
+
+La variable `Academic_Level` es una variable cualitativa ordinal que proporciona información valiosa sobre el nivel educacional de los encuestados. La distribución muestra una representación significativa en todos los niveles, con una ligera predominancia de estudiantes de pregrado. Al ser una variable ordinal, no se le asocia una distribución de probabilidad en el sentido de las distribuciones continuas o discretas numéricas como la Normal o Poisson, pero es crucial para segmentar o estratificar el análisis de otras variables del estudio.
+
+
+---
+
+## **4. Análisis de la Variable 'Avg\_Daily\_Usage\_Hours'**
+
+Este análisis explorará la distribución y características de la variable `Avg_Daily_Usage_Hours` (Horas promedio de uso diario). Esta es una variable cuantitativa continua, y se analizará mediante estadísticas descriptivas, visualizaciones y pruebas de normalidad.
+
+### **Obtención de Estadísticas Descriptivas**
+
+```{r}
+# Extraer la columna 'Avg_Daily_Usage_Hours'
+usage_hours_data <- df$Avg_Daily_Usage_Hours
+
+# Calcular estadísticas descriptivas
+usage_hours_summary <- summary(usage_hours_data)
+usage_hours_min <- usage_hours_summary["Min."]
+usage_hours_max <- usage_hours_summary["Max."]
+usage_hours_25th <- usage_hours_summary["1st Qu."]
+usage_hours_75th <- usage_hours_summary["3rd Qu."]
+usage_hours_mean <- mean(usage_hours_data)
+usage_hours_sd <- sd(usage_hours_data)
+usage_hours_median <- median(usage_hours_data)
+
+cat("--- Estadísticas Descriptivas para Avg_Daily_Usage_Hours ---\n")
+print(usage_hours_summary)
+cat(paste("Media (mean):", round(usage_hours_mean, 4), "\n"))
+cat(paste("Desviación Estándar (sd):", round(usage_hours_sd, 4), "\n"))
+cat(paste("Mediana:", round(usage_hours_median, 4), "\n"))
+cat(paste("Tamaño de la muestra (N):", length(usage_hours_data), "\n"))
+```
+
+**Interpretación:**
+
+Los encuestados pasan un promedio de aproximadamente `r usage_hours_mean` horas al día en redes sociales, con la mitad de los encuestados utilizando `r usage_hours_median` horas o menos. Los datos varían desde un mínimo de `r usage_hours_min` horas hasta un máximo de `r usage_hours_max` horas. Esto muestra que hay usuarios con un uso relativamente bajo y otros con un uso bastante elevado. El 50% central de los datos (entre el primer y el tercer cuartil) se encuentra entre `r usage_hours_25th` y `r usage_hours_75th` horas diarias. En cuanto a la dispersión de los datos, la desviación estándar de `r usage_hours_sd` horas es relativamente baja en comparación con la media. Esto indica que la mayoría de los datos se agrupan de manera más estrecha alrededor de la media. El 50% central de los usuarios (entre el primer y el tercer cuartil) dedican entre 4.1 y 5.9 horas al día a las redes sociales, lo que refuerza la idea de una concentración de usuarios en ese rango.
+
+### Visualización: Histograma de Horas de Uso Diario
+
+Un histograma ayuda a visualizar la distribución de la variable `Avg_Daily_Usage_Hours`.
+
+```{r fig.width=10, fig.height=6}
+# Crear un histograma de las horas de uso diario
+hist(usage_hours_data,
+     main = "Distribución de Horas Promedio de Uso Diario de Redes Sociales",
+     xlab = "Horas al Día",
+     ylab = "Frecuencia",
+     col = "lightgreen",
+     border = "black",
+     breaks = 10 # Número de barras
+     )
+```
+
+### Visualización: Diagrama de Caja (Box Plot) de Horas de Uso Diario
+
+Un diagrama de caja es útil para identificar la dispersión de los datos y posibles valores atípicos (outliers).
+
+```{r fig.width=8, fig.height=6}
+# Crear un diagrama de caja de las horas de uso diario
+boxplot(usage_hours_data,
+        main = "Diagrama de Caja de Horas Promedio de Uso Diario",
+        ylab = "Horas al Día",
+        col = "orange",
+        border = "darkorange",
+        horizontal = FALSE # Para que sea vertical
+        )
+```
+
+**Interpretación de las Visualizaciones:**
+
+El **histograma** muestra una distribución que se concentra en el centro, con un pico  alrededor de las 5 horas. El **diagrama de caja** no muestra valores atípicos extremos, confirmando que la mayoría de los datos están dentro del rango esperado de uso diario. La mediana está relativamente ubicada en el centro de la caja, lo que sugiere una distribución relativamente simétrica alrededor de ese punto para el 50% central.
+
+### **Pruebas de Normalidad**
+
+Se realizarán pruebas estadísticas para evaluar la hipótesis nula de que los datos provienen de una distribución normal.
+
+#### **a) Prueba de Shapiro-Wilk**
+
+Esta prueba es adecuada para tamaños de muestra pequeños a moderados (generalmente N \< 5000).
+
+  * **Hipótesis Nula ($H\_0$):** Los datos se distribuyen normalmente.
+  * **Hipótesis Alternativa ($H\_1$):** Los datos no se distribuyen normalmente.
+
+```{r}
+# Prueba de Shapiro-Wilk
+shapiro_test_usage <- shapiro.test(usage_hours_data)
+cat("--- Prueba de Shapiro-Wilk para Avg_Daily_Usage_Hours ---\n")
+print(shapiro_test_usage)
+```
+
+**Interpretación:**
+Dado que el p-valor es mucho menor que el nivel de significancia común (e.g., alpha = 0.05), **se rechaza la hipótesis nula**. Esto sugiere que la variable `Avg_Daily_Usage_Hours` **no sigue una distribución normal** según la prueba de Shapiro-Wilk.
+
+#### **b) Prueba de Kolmogorov-Smirnov (Lilliefors)**
+
+Esta prueba es una alternativa para tamaños de muestra más grandes.
+
+  * **Hipótesis Nula ($H\_0$):** Los datos se distribuyen normalmente.
+  * **Hipótesis Alternativa ($H\_1$):** Los datos no se distribuyen normalmente.
+
+```{r}
+# Prueba de Lilliefors
+lillie_test_usage <- lillie.test(usage_hours_data)
+cat("\n--- Prueba de Lilliefors (Kolmogorov-Smirnov) para Avg_Daily_Usage_Hours ---\n")
+print(lillie_test_usage)
+```
+
+**Interpretación:**
+Similar a la prueba de Shapiro-Wilk, el p-valor es significativamente menor que alpha = 0.05. Por lo tanto, **rechazamos la hipótesis nula**, lo que refuerza la conclusión de que la variable `Avg_Daily_Usage_Hours` **no se distribuye normalmente**.
+
+### **Visualización de la Normalidad**
+
+Las visualizaciones sirven para complementar las pruebas estadísticas y obtener una comprensión de la forma de la distribución.
+
+####  **a) Histograma con Curva de Densidad Normal**
+
+Se superpone una curva de densidad normal teórica (con la media y desviación estándar de los datos) sobre el histograma de las horas de uso diario.
+
+```{r fig.width=10, fig.height=6}
+# Calcular la densidad de la distribución normal teórica
+x_vals_usage <- seq(min(usage_hours_data), max(usage_hours_data), length.out = 100)
+normal_density_usage <- dnorm(x_vals_usage, mean = mean(usage_hours_data), sd = sd(usage_hours_data))
+
+# Escalar la densidad normal para que se ajuste a la altura del histograma
+hist_info_usage <- hist(usage_hours_data, plot = FALSE, breaks = 10) # Obtener información del histograma sin plotearlo
+hist_max_freq_usage <- max(hist_info_usage$counts)
+hist_max_density_usage <- max(hist_info_usage$density)
+scale_factor_usage <- hist_max_freq_usage / hist_max_density_usage
+
+# Crear el histograma
+hist(usage_hours_data,
+     main = "Distribución de Horas Promedio de Uso Diario con Curva Normal Superpuesta",
+     xlab = "Horas al Día",
+     ylab = "Frecuencia",
+     col = "lightgreen",
+     border = "black",
+     breaks = 10,
+     freq = TRUE # Asegurarse de que el eje y sea frecuencia
+     )
+
+# Añadir la curva de densidad normal escalada
+lines(x_vals_usage, normal_density_usage * scale_factor_usage, col = "red", lwd = 2)
+legend("topright", legend = "Curva Normal Teórica", col = "red", lwd = 2)
+```
+
+**Interpretación:**
+
+El histograma con la curva normal superpuesta muestra que la distribución de `Avg_Daily_Usage_Hours` no se ajusta bien a una distribución normal. Se observan múltiples picos y una forma que no es la de campana simétrica esperada.
+
+####  **b) Gráfico Cuantil-Cuantil (Q-Q Plot)**
+
+Un Q-Q plot compara los cuantiles de los datos con los cuantiles teóricos de una distribución normal. Si los puntos caen cerca de la línea diagonal, los datos se distribuyen normalmente.
+
+```{r fig.width=8, fig.height=8}
+# Crear un Q-Q plot
+qqnorm(usage_hours_data, main = "Q-Q Plot de Horas Promedio de Uso Diario")
+qqline(usage_hours_data, col = "blue", lwd = 2)
+```
+
+**Interpretación:**
+
+El Q-Q plot muestra una desviación de la línea recta, especialmente en los extremos y en el centro. Esto es una indicación de que la variable `Avg_Daily_Usage_Hours` no sigue una distribución normal. Las desviaciones en los extremos sugieren que la distribución real tiene colas más pesadas o más ligeras de lo que una distribución normal predeciría.
+
+### **Conclusión del Análisis de Normalidad para 'Avg\_Daily\_Usage\_Hours'**
+
+Basado en las pruebas estadísticas (Shapiro-Wilk y Lilliefors) y las visualizaciones (histograma con curva normal y Q-Q plot), se puede concluir que la variable `Avg_Daily_Usage_Hours` **no sigue una distribución normal**. Las pruebas estadísticas arrojaron p-valores extremadamente bajos, lo que lleva al rechazo de la hipótesis de normalidad. Las visualizaciones confirman que la distribución tiene una forma irregular y desviaciones de la forma de campana esperada.
+
+
+---
+
+## **5. Análisis de la Variable 'Affects\_Academic\_Performance'**
+
+Este análisis explorará la distribución y características de la variable `Affects_Academic_Performance` (Afecta el Rendimiento Académico). Esta es una variable cualitativa nominal (booleana), por lo que se centrará en las frecuencias y proporciones de sus categorías.
+
+### **Frecuencias Absolutas y Relativas**
+
+```{r}
+# Extraer la columna 'Affects_Academic_Performance'
+performance_data <- df$Affects_Academic_Performance
+
+# Limpiar y estandarizar los datos (convertir a minúsculas y quitar espacios)
+performance_data <- tolower(trimws(performance_data))
+
+# Convertir a factor para un mejor manejo de categorías
+performance_data <- factor(performance_data)
+
+cat("--- Resumen de la Variable Affects_Academic_Performance ---\n")
+print(summary(performance_data))
+cat("\n")
+
+# Calcular la tabla de frecuencias
+performance_counts <- table(performance_data)
+cat("Frecuencias Absolutas:\n")
+print(performance_counts)
+cat("\n")
+
+# Calcular las proporciones (frecuencias relativas)
+performance_proportions <- prop.table(performance_counts)
+cat("Frecuencias Relativas (Proporciones):\n")
+print(performance_proportions)
+cat("\n")
+
+# Calcular el número total de encuestados
+total_respondents <- length(performance_data)
+cat(paste("Número total de encuestados:", total_respondents, "\n"))
+```
+
+**Interpretación:**
+De un total de `r total_respondents` encuestados:
+
+  * `r performance_counts["no"]` (`r performance_proportions["no"] * 100`%) responden 'no', indicando que no consideran que el uso de redes sociales afecte negativamente su rendimiento académico.
+  * `r performance_counts["yes"]` (`r performance_proportions["yes"] * 100`%) responden 'yes', indicando que sí consideran que el uso de redes sociales afecta negativamente su rendimiento académico.
+
+Esto muestra que una mayoría significativa de los encuestados (casi dos tercios) percibe un impacto negativo de las redes sociales en su rendimiento académico.
+
+### **Visualización: Gráfico de Barras de 'Affects\_Academic\_Performance'**
+
+Un gráfico de barras es la visualización más adecuada para variables cualitativas, mostrando la frecuencia o proporción de cada categoría.
+
+```{r fig.width=8, fig.height=6}
+# Crear un data frame para ggplot2
+performance_df <- as.data.frame(performance_counts)
+colnames(performance_df) <- c("Impact", "Count")
+
+# Crear el gráfico de barras con ggplot2
+ggplot(performance_df, aes(x = Impact, y = Count, fill = Impact)) +
+  geom_bar(stat = "identity", color = "black") +
+  geom_text(aes(label = Count), vjust = -0.5, size = 4) + # Añadir etiquetas de conteo
+  labs(title = "Percepción del Impacto en el Rendimiento Académico",
+       x = "Afecta el Rendimiento Académico",
+       y = "Número de Encuestados") +
+  scale_fill_manual(values = c("no" = "lightcoral", "yes" = "steelblue")) + # Colores personalizados
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5)) # Centrar título
+```
+
+**Interpretación de la Visualización:**
+
+El gráfico de barras confirma visualmente la predominancia de respuestas "Sí", lo que subraya la percepción generalizada de un impacto negativo en el rendimiento académico entre los encuestados.
+
+### **Distribución de Probabilidad Binomial**
+
+Dado que `Affects_Academic_Performance` es una variable binaria (Sí/No), la distribución de probabilidad que naturalmente se asocia con el número de "éxitos" (por ejemplo, respuestas "Sí") en una serie de ensayos independientes es la **Distribución Binomial**.
+
+Para usar la distribución binomial, se necesita:
+
+  * **`size` (n):** El número de ensayos (en este caso, el número de encuestados en una sub-muestra o el total si se considera toda la población como ensayos).
+  * **`prob` (p):** La probabilidad de "éxito" (la proporción de respuestas "Sí" en la población o en la muestra grande).
+
+Basado en nuestros datos, la probabilidad de que un encuestado responda "Sí" (nuestro 'éxito') es $p = 0.6568$.
+
+**Ejemplo de Cálculo Binomial en R:**
+
+Supongamos que se quiere saber la probabilidad de que, si se seleccionan 10 estudiantes al azar, **exactamente 7** de ellos consideren que el uso de redes sociales afecta negativamente su rendimiento académico.
+
+```{r}
+# Parámetros para el ejemplo Binomial
+n_ejemplo <- 10        # Número de ensayos (estudiantes seleccionados)
+p_exito <- performance_proportions["yes"] # Probabilidad de éxito (responder 'yes')
+x_deseado <- 7        # Número de éxitos deseados
+
+# Calcular la probabilidad usando dbinom()
+prob_binomial_ejemplo <- dbinom(x_deseado, size = n_ejemplo, prob = p_exito)
+cat(paste0("Probabilidad de que exactamente ", x_deseado, " de ", n_ejemplo, " estudiantes respondan 'Sí': ", round(prob_binomial_ejemplo, 4), "\n"))
+```
+
+**Interpretación del Ejemplo Binomial:**
+Este cálculo muestra la probabilidad puntual de obtener un número específico de "éxitos" en un número fijo de intentos, utilizando la probabilidad de éxito observada en el dataset.
+
+### **Conclusión del Análisis de 'Affects\_Academic\_Performance'**
+
+La variable `Affects_Academic_Performance` es una variable cualitativa nominal que indica una clara percepción mayoritaria (`r performance_proportions["yes"] * 100`%) de que el uso de redes sociales impacta negativamente el rendimiento académico entre los encuestados. Dada su naturaleza binaria, la **distribución Binomial** es la distribución de probabilidad adecuada para modelar el número de respuestas "Sí" o "No" en un conjunto de ensayos. Esta información sirve para entender el impacto percibido de las redes sociales y puede ser un punto de partida para análisis más profundos sobre las correlaciones con otras variables.
+
+
+---
+
+## **6. Análisis de la Variable 'Sleep\_Hours\_Per\_Night'**
+
+Este análisis explorará la distribución y características de la variable `Sleep_Hours_Per_Night` (Horas de Sueño por Noche). Esta es una variable cuantitativa continua, y se analizará mediante estadísticas descriptivas, visualizaciones y pruebas de normalidad.
+
+### **Obtención de Estadísticas Descriptivas**
+
+```{r}
+# Extraer la columna 'Sleep_Hours_Per_Night'
+sleep_hours_data <- df$Sleep_Hours_Per_Night
+
+# Calcular estadísticas descriptivas
+sleep_hours_summary <- summary(sleep_hours_data)
+sleep_hours_mean <- mean(sleep_hours_data)
+sleep_hours_min <- sleep_hours_summary["Min."]
+sleep_hours_max <- sleep_hours_summary["Max."]
+sleep_hours_25th <- sleep_hours_summary["1st Qu."]
+sleep_hours_75th <- sleep_hours_summary["3rd Qu."]
+sleep_hours_sd <- sd(sleep_hours_data)
+sleep_hours_median <- median(sleep_hours_data)
+
+cat("--- Estadísticas Descriptivas para Sleep_Hours_Per_Night ---\n")
+print(sleep_hours_summary)
+cat(paste("Media (mean):", round(sleep_hours_mean, 4), "\n"))
+cat(paste("Desviación Estándar (sd):", round(sleep_hours_sd, 4), "\n"))
+cat(paste("Mediana:", round(sleep_hours_median, 4), "\n"))
+cat(paste("Tamaño de la muestra (N):", length(sleep_hours_data), "\n"))
+```
+
+**Interpretación:**
+
+Los encuestados duermen, en promedio, aproximadamente `r sleep_hours_mean` horas por noche, con una mediana de `r sleep_hours_median`. La desviación estándar de `r sleep_hours_sd` horas indica una variabilidad moderada en las horas de sueño. Los datos varían desde un mínimo de `r sleep_hours_min` horas hasta un máximo de `r sleep_hours_max` horas. El 50% central de los datos (entre el primer y el tercer cuartil) se encuentra entre `r sleep_hours_25th` y `r sleep_hours_75th` horas por noche.
+
+### **Visualización Descriptiva**
+A continuación, se presentan un histograma y un diagrama de caja (box plot) para visualizar la distribución de las horas de sueño.
+
+#### **a) Histograma de Horas de Sueño por Noche**
+Este gráfico muestra la frecuencia de las horas de sueño, permitiendo observar la forma general de la distribución.
+
+```{r fig.width=10, fig.height=6}
+hist(sleep_hours_data,
+     main = "Distribución de Horas de Sueño por Noche",
+     xlab = "Horas de Sueño",
+     ylab = "Frecuencia",
+     col = "darkseagreen",
+     border = "black",
+     breaks = 10 # Número de barras
+     )
+```
+**Interpretación:**
+  
+El histograma muestra una concentración de encuestados que reportan entre 5 y 7 horas de sueño por noche, con picos notables en los valores enteros de 6 y 7 horas. La distribución no parece ser perfectamente simétrica.
+
+#### **b) Diagrama de Caja (Box Plot) de Horas de Sueño por Noche**
+Este gráfico proporciona una vista de la dispersión de los datos y la presencia de posibles valores atípicos (outliers).
+
+```{r fig.width=10, fig.height=6}
+boxplot(sleep_hours_data,
+        main = "Diagrama de Caja de Horas de Sueño por Noche",
+        ylab = "Horas de Sueño",
+        col = "skyblue",
+        border = "darkblue",
+        horizontal = FALSE # Para que sea vertical
+        )
+```
+**Interpretación:**
+
+El diagrama de caja confirma que la mayoría de los datos se encuentran entre 5 y 7 horas. La mediana está ubicada cerca del centro de la caja. Se observan algunos puntos fuera de los "bigotes" (whiskers), que podrían ser considerados valores atípicos, aunque no son extremos.
+
+### **Pruebas de Normalidad**
+Se realizarán pruebas estadísticas para evaluar la hipótesis nula de que los datos provienen de una distribución normal.
+
+#### a) Prueba de Shapiro-Wilk
+
+```{r}
+# Prueba de Shapiro-Wilk
+shapiro_test_sleep <- shapiro.test(sleep_hours_data)
+cat("--- Prueba de Shapiro-Wilk para Sleep_Hours_Per_Night ---\n")
+print(shapiro_test_sleep)
+```
+
+**Interpretación:**
+
+El p-valor es extremadamente bajo (mucho menor que $\alpha = 0.05$). Esto nos lleva a **rechazar la hipótesis nula** de normalidad. Se sugiere que la variable `Sleep_Hours_Per_Night` **no sigue una distribución normal** según la prueba de Shapiro-Wilk.
+
+#### b) Prueba de Kolmogorov-Smirnov (Lilliefors)
+
+```{r}
+# Prueba de Lilliefors
+lillie_test_sleep <- lillie.test(sleep_hours_data)
+cat("\n--- Prueba de Lilliefors (Kolmogorov-Smirnov) para Sleep_Hours_Per_Night ---\n")
+print(lillie_test_sleep)
+```
+
+**Interpretación:**
+
+De manera consistente, el p-valor es muy pequeño, llevando a **rechazar la hipótesis nula** de normalidad. Esta prueba también indica que la variable `Sleep_Hours_Per_Night` **no sigue una distribución normal**.
+
+### Visualización de la Normalidad
+
+Las visualizaciones son cruciales para complementar las pruebas estadísticas.
+
+#### **a) Histograma con Curva de Densidad Normal**
+
+Se superpone una curva de densidad normal teórica (con la media y desviación estándar de los datos) sobre el histograma de las horas de sueño.
+
+```{r fig.width=10, fig.height=6}
+# Calcular la densidad de la distribución normal teórica
+x_vals_sleep <- seq(min(sleep_hours_data), max(sleep_hours_data), length.out = 100)
+normal_density_sleep <- dnorm(x_vals_sleep, mean = mean(sleep_hours_data), sd = sd(sleep_hours_data))
+
+# Escalar la densidad normal para que se ajuste a la altura del histograma
+hist_info_sleep <- hist(sleep_hours_data, plot = FALSE, breaks = 10) # Obtener información del histograma sin plotearlo
+hist_max_freq_sleep <- max(hist_info_sleep$counts)
+hist_max_density_sleep <- max(hist_info_sleep$density)
+scale_factor_sleep <- hist_max_freq_sleep / hist_max_density_sleep
+
+# Crear el histograma
+hist(sleep_hours_data,
+     main = "Distribución de Horas de Sueño por Noche con Curva Normal Superpuesta",
+     xlab = "Horas de Sueño",
+     ylab = "Frecuencia",
+     col = "darkseagreen",
+     border = "black",
+     breaks = 10, # Podrías ajustar breaks para mejor visualización
+     freq = TRUE # Asegurarse de que el eje y sea frecuencia
+     )
+
+# Añadir la curva de densidad normal escalada
+lines(x_vals_sleep, normal_density_sleep * scale_factor_sleep, col = "red", lwd = 2)
+legend("topright", legend = "Curva Normal Teórica", col = "red", lwd = 2)
+```
+
+**Interpretación:**
+
+El histograma con la curva normal superpuesta muestra que la distribución de `Sleep_Hours_Per_Night` no se ajusta bien a una distribución normal. Se observan picos en valores enteros (como 6 y 7 horas), lo que sugiere que las horas de sueño se reportan con mayor frecuencia como números redondos, y la forma general no es la de campana suave y simétrica esperada. La distribución parece más inclinada hacia la derecha (sesgo negativo, aunque no tan pronunciado).
+
+#### **b) Gráfico Cuantil-Cuantil (Q-Q Plot)**
+
+```{r fig.width=8, fig.height=8}
+# Crear un Q-Q plot
+qqnorm(sleep_hours_data, main = "Q-Q Plot de Horas de Sueño por Noche")
+qqline(sleep_hours_data, col = "blue", lwd = 2)
+```
+
+**Interpretación:**
+
+El Q-Q plot de la variable `Sleep_Hours_Per_Night` muestra una desviación clara de la línea diagonal recta, especialmente en los extremos. Los puntos forman una "S" o una curva, indicando que los datos tienen colas más pesadas o más ligeras, y una distribución de cuantiles diferente a la de una distribución normal. Esta es una fuerte indicación de no normalidad.
+
+### **Conclusión del Análisis de Normalidad para 'Sleep\_Hours\_Per\_Night'**
+
+La variable `Sleep_Hours_Per_Night` muestra que los encuestados duermen en promedio alrededor de `r mean(sleep_hours_data) ` horas por noche. Sin embargo, el análisis de normalidad concluye que **esta variable no sigue una distribución normal**.
+
+Las pruebas estadísticas (Shapiro-Wilk y Lilliefors) rechazan la hipótesis de normalidad con p-valores extremadamente bajos, proporcionando una evidencia sólida. Las visualizaciones (histograma y Q-Q plot) refuerzan esta conclusión, mostrando una distribución que difiere significativamente de la forma de campana normal, con una posible tendencia a reportar horas enteras y una forma que no es perfectamente simétrica o mesocúrtica.
+
+
+---
+
+## **7. Análisis de la Variable 'Mental\_Health\_Score'**
+
+Este análisis explorará la distribución y características de la variable `Mental_Health_Score` (Puntuación de Salud Mental). Esta es una variable cuantitativa discreta, y la analizaremos mediante estadísticas descriptivas, visualizaciones y pruebas de normalidad. También consideraremos la aplicabilidad de la distribución de Poisson, dado que es una puntuación de conteo.
+
+### **Obtención de Estadísticas Descriptivas**
+
+```{r}
+# Extraer la columna 'Mental_Health_Score'
+mental_health_data <- df$Mental_Health_Score
+
+# Calcular estadísticas descriptivas
+mental_health_summary <- summary(mental_health_data)
+mental_health_mean <- mean(mental_health_data)
+mental_health_min <- mental_health_summary["Min."]
+mental_health_max <- mental_health_summary["Max."]
+mental_health_25th <- mental_health_summary["1st Qu."]
+mental_health_75th <- mental_health_summary["3rd Qu."]
+mental_health_sd <- sd(mental_health_data)
+mental_health_median <- median(mental_health_data)
+mental_health_variance <- var(mental_health_data) # Calcular la varianza para Poisson
+
+cat("--- Estadísticas Descriptivas para Mental_Health_Score ---\n")
+print(mental_health_summary)
+cat(paste("Media (mean):", round(mental_health_mean, 4), "\n"))
+cat(paste("Desviación Estándar (sd):", round(mental_health_sd, 4), "\n"))
+cat(paste("Varianza:", round(mental_health_variance, 4), "\n")) # Mostrar varianza
+cat(paste("Mediana:", round(mental_health_median, 4), "\n"))
+cat(paste("Tamaño de la muestra (N):", length(mental_health_data), "\n"))
+```
+
+**Interpretación:**
+
+Las puntuaciones de salud mental varían desde un mínimo de `r mental_health_min` hasta un máximo de `r mental_health_max`. La media es de aproximadamente `r mental_health_mean` y la mediana es `r mental_health_median`, lo que sugiere una distribución ligeramente sesgada o concentrada. La desviación estándar de `r mental_health_sd` indica una dispersión moderada de las puntuaciones. El 50% central de los encuestados reporta puntuaciones entre `r mental_health_25th` y `r mental_health_75th`.
+
+### **Visualización Descriptiva**
+
+A continuación, se presentan un histograma y un diagrama de caja (box plot) para visualizar la distribución de las puntuaciones de salud mental.
+
+#### **a) Histograma de Puntuación de Salud Mental**
+
+```{r fig.width=9, fig.height=6}
+hist(mental_health_data,
+     main = "Distribución de Puntuación de Salud Mental",
+     xlab = "Puntuación de Salud Mental",
+     ylab = "Frecuencia",
+     col = "lightcoral",
+     border = "black",
+     breaks = seq(min(mental_health_data)-0.5, max(mental_health_data)+0.5, by = 1), # Centrar las barras en los enteros
+     freq = TRUE # Asegurarse de que el eje y sea frecuencia
+     )
+```
+
+**Interpretación:**
+
+El histograma muestra que las puntuaciones más frecuentes se encuentran alrededor de 3 y 4. La distribución parece tener una forma algo sesgada, con un descenso gradual hacia puntuaciones más altas y un descenso más rápido hacia las puntuaciones más bajas.
+
+#### b) Diagrama de Caja (Box Plot) de Puntuación de Salud Mental
+
+```{r fig.width=7, fig.height=7}
+boxplot(mental_health_data,
+        main = "Diagrama de Caja de Puntuación de Salud Mental",
+        ylab = "Puntuación de Salud Mental",
+        col = "peachpuff",
+        border = "brown",
+        horizontal = FALSE # Para que sea vertical
+        )
+```
+
+**Interpretación:**
+
+El diagrama de caja muestra que la mediana es `r mental_health_median`. La mayoría de las puntuaciones se concentran entre `r mental_health_25th` y `r mental_health_75th`. Se observan varios valores atípicos tanto en el extremo inferior (1) como en el superior (6), lo que indica que hay encuestados con puntuaciones muy bajas o muy altas en comparación con la mayoría.
+
+### **Consideración de la Distribución de Poisson**
+
+La distribución de Poisson se utiliza para modelar el número de eventos en un intervalo de tiempo o espacio, o el número de ocurrencias de un evento en un conjunto fijo de observaciones, donde los eventos son raros y la media y la varianza son aproximadamente iguales.
+
+  * **Media ($\lambda$):** `r mental_health_mean`
+  * **Varianza:** `r mental_health_variance`
+
+Dado que la **media (`r mental_health_mean`) y la varianza (`r mental_health_variance`) son diferentes**, la variable `Mental_Health_Score` no parece seguir una distribución de Poisson de manera estricta. Una varianza menor que la media (lo que ocurre aquí, `r mental_health_variance` < `r mental_health_mean`) sugiere un fenómeno llamado "subdispersión", lo cual es una desviación del modelo de Poisson.
+
+### **Pruebas de Normalidad**
+
+Aunque `Mental_Health_Score` es discreta, a menudo se comprueba su "normalidad" para ver si puede ser razonablemente aproximada por una distribución normal, especialmente si tiene un rango amplio y muchos valores.
+
+#### **Prueba de Shapiro-Wilk**
+
+```{r}
+# Prueba de Shapiro-Wilk
+shapiro_test_mental <- shapiro.test(mental_health_data)
+cat("--- Prueba de Shapiro-Wilk para Mental_Health_Score ---\n")
+print(shapiro_test_mental)
+```
+
+**Interpretación:**
+
+El p-valor es extremadamente bajo (mucho menor que $\alpha = 0.05$). Esto nos lleva a **rechazar la hipótesis nula** de normalidad. Se sugiere que la variable `Mental_Health_Score` **no sigue una distribución normal**.
+
+### **Visualización de la Normalidad**
+
+Las visualizaciones son cruciales para complementar las pruebas estadísticas.
+
+#### **a) Histograma con Curva de Densidad Normal Superpuesta**
+
+```{r fig.width=10, fig.height=6}
+# Calcular la densidad de la distribución normal teórica
+x_vals_mental <- seq(min(mental_health_data), max(mental_health_data), length.out = 100)
+normal_density_mental <- dnorm(x_vals_mental, mean = mean(mental_health_data), sd = sd(mental_health_data))
+
+# Escalar la densidad normal para que se ajuste a la altura del histograma
+hist_info_mental <- hist(mental_health_data, plot = FALSE, breaks = seq(min(mental_health_data)-0.5, max(mental_health_data)+0.5, by = 1))
+hist_max_freq_mental <- max(hist_info_mental$counts)
+hist_max_density_mental <- max(hist_info_mental$density)
+scale_factor_mental <- hist_max_freq_mental / hist_max_density_mental
+
+# Crear el histograma
+hist(mental_health_data,
+     main = "Distribución de Puntuación de Salud Mental con Curva Normal Superpuesta",
+     xlab = "Puntuación de Salud Mental",
+     ylab = "Frecuencia",
+     col = "lightcoral",
+     border = "black",
+     breaks = seq(min(mental_health_data)-0.5, max(mental_health_data)+0.5, by = 1),
+     freq = TRUE
+     )
+
+# Añadir la curva de densidad normal escalada
+lines(x_vals_mental, normal_density_mental * scale_factor_mental, col = "blue", lwd = 2)
+legend("topright", legend = "Curva Normal Teórica", col = "blue", lwd = 2)
+```
+
+**Interpretación:**
+
+El histograma con la curva normal superpuesta muestra que la distribución de `Mental_Health_Score` no se ajusta bien a una distribución normal. La distribución real es claramente discreta (barras separadas por valores enteros), y su forma es diferente a la curva de campana, siendo más uniforme o ligeramente sesgada.
+
+#### **b) Gráfico Cuantil-Cuantil (Q-Q Plot)**
+
+```{r fig.width=8, fig.height=8}
+# Crear un Q-Q plot
+qqnorm(mental_health_data, main = "Q-Q Plot de Puntuación de Salud Mental")
+qqline(mental_health_data, col = "purple", lwd = 2)
+```
+
+**Interpretación:**
+
+El Q-Q plot de la variable `Mental_Health_Score` muestra una desviación muy clara y escalonada de la línea diagonal. Esta forma de "escalera" es característica de datos discretos que no se distribuyen normalmente. Los puntos no se alinean con la línea, lo que es una fuerte indicación de no normalidad.
+
+### **Conclusión del Análisis Completo de 'Mental\_Health\_Score'**
+
+La variable `Mental_Health_Score` es una puntuación discreta que varía de 1 a 6, con una media de aproximadamente `r mean(mental_health_data)`.
+
+  * **Distribución de Poisson:** A pesar de ser una variable de conteo, la **media (3.785) y la varianza (2.3942) son notablemente diferentes**, lo que indica que la variable no sigue una distribución de Poisson de manera estricta. Hay evidencia de subdispersión.
+  * **Normalidad:** Las pruebas estadísticas (Shapiro-Wilk) y las visualizaciones (histograma y Q-Q plot) concluyen de manera consistente que **esta variable no sigue una distribución normal**. La naturaleza discreta de los datos es evidente en los gráficos, y su forma no se asemeja a una campana.
+
+
+---
+
+## **8. Análisis de la Variable 'Conflicts\_Over\_Social\_Media'**
+
+Este análisis explorará la distribución y características de la variable `Conflicts_Over_Social_Media` (Número de conflictos o discusiones relacionados con el uso de redes sociales). Esta es una variable cuantitativa discreta (de conteo), y la analizaremos mediante estadísticas descriptivas, visualizaciones y pruebas de normalidad. También consideraremos la aplicabilidad de la distribución de Poisson.
+
+### **Obtención de Estadísticas Descriptivas**
+
+```{r}
+# Extraer la columna 'Conflicts_Over_Social_Media'
+conflicts_data <- df$Conflicts_Over_Social_Media
+
+# Calcular estadísticas descriptivas
+conflicts_summary <- summary(conflicts_data)
+conflicts_mean <- mean(conflicts_data)
+conflicts_min <- conflicts_summary["Min."]
+conflicts_max <- conflicts_summary["Max."]
+conflicts_25th <- conflicts_summary["1st Qu."]
+conflicts_75th <- conflicts_summary["3rd Qu."]
+conflicts_sd <- sd(conflicts_data)
+conflicts_median <- median(conflicts_data)
+conflicts_variance <- var(conflicts_data) # Calcular la varianza para Poisson
+
+cat("--- Estadísticas Descriptivas para Conflicts_Over_Social_Media ---\n")
+print(conflicts_summary)
+cat(paste("Media (mean):", round(conflicts_mean, 4), "\n"))
+cat(paste("Mínimo:", round(conflicts_min, 4), "\n"))
+cat(paste("Máximo:", round(conflicts_max, 4), "\n"))
+cat(paste("1er Cuartil:", round(conflicts_25th, 4), "\n"))
+cat(paste("3er Cuartil:", round(conflicts_75th, 4), "\n"))
+cat(paste("Desviación Estándar (sd):", round(conflicts_sd, 4), "\n"))
+cat(paste("Varianza:", round(conflicts_variance, 4), "\n")) # Mostrar varianza
+cat(paste("Mediana:", round(conflicts_median, 4), "\n"))
+cat(paste("Tamaño de la muestra (N):", length(conflicts_data), "\n"))
+```
+
+**Interpretación:**
+
+Los encuestados reportan un número de conflictos que varía desde un mínimo de `r conflicts_min` hasta un máximo de `r conflicts_max`. La media es de aproximadamente `r conflicts_mean`, y la mediana es `r conflicts_median`, lo que sugiere que la mayoría de los encuestados reportan un número bajo de conflictos. La desviación estándar de `r conflicts_sd` indica una dispersión moderada en el número de conflictos. El 50% central de los encuestados reporta entre `r conflicts_25th` y `r conflicts_75th` conflictos, lo que indica que la mayoría se encuentra en un rango relativamente bajo.
+
+### **Visualización Descriptiva**
+
+A continuación, se presentan un histograma y un diagrama de caja (box plot) para visualizar la distribución del número de conflictos.
+
+#### **a) Histograma de Conflictos por Redes Sociales**
+
+```{r fig.width=9, fig.height=6}
+hist(conflicts_data,
+     main = "Distribución de Conflictos por Redes Sociales",
+     xlab = "Número de Conflictos",
+     ylab = "Frecuencia",
+     col = "lightsalmon",
+     border = "black",
+     breaks = seq(min(conflicts_data)-0.5, max(conflicts_data)+0.5, by = 1), # Centrar las barras en los enteros
+     freq = TRUE # Asegurarse de que el eje y sea frecuencia
+     )
+```
+
+**Interpretación:**
+
+El histograma muestra que la mayoría de los encuestados reportan 2, 3, o 4 conflictos, con una frecuencia decreciente a medida que aumenta y disminuye el número de conflictos. La distribución está claramente sesgada a la derecha, con una cola más larga hacia valores más altos de conflictos.
+
+#### b) Diagrama de Caja (Box Plot) de Conflictos por Redes Sociales
+
+```{r fig.width=7, fig.height=7}
+boxplot(conflicts_data,
+        main = "Diagrama de Caja de Conflictos por Redes Sociales",
+        ylab = "Número de Conflictos",
+        col = "lightsteelblue",
+        border = "darkblue",
+        horizontal = FALSE # Para que sea vertical
+        )
+```
+
+**Interpretación:**
+
+El diagrama de caja confirma la concentración de datos en los valores más altos. La mediana es `r conflicts_median`.
+
+### **Consideración de la Distribución de Poisson**
+
+La distribución de Poisson se utiliza para modelar el número de eventos en un intervalo de tiempo o espacio, o el número de ocurrencias de un evento. Una característica clave de la distribución de Poisson es que su **media ($\lambda$) es igual a su varianza**.
+
+  * **Media ($\lambda$):** `r conflicts_mean`
+  * **Varianza:** `r conflicts_variance`
+
+Dado que la **media (`r conflicts_mean`) y la varianza (`r conflicts_variance`) son diferentes**, la variable `Conflicts_Over_Social_Media` no parece seguir una distribución de Poisson. Una varianza menor que la media (lo que ocurre aquí, `r conflicts_variance` < `r conflicts_mean`) sugiere un fenómeno llamado "subdispersión", lo cual es una desviación del modelo de Poisson.
+
+### **Pruebas de Normalidad**
+
+Aunque `Conflicts_Over_Social_Media` es discreta, se evalúa su "normalidad" para ver si puede ser aproximada por una distribución normal.
+
+#### **a) Prueba de Shapiro-Wilk**
+
+```{r}
+# Prueba de Shapiro-Wilk
+shapiro_test_conflicts <- shapiro.test(conflicts_data)
+cat("--- Prueba de Shapiro-Wilk para Conflicts_Over_Social_Media ---\n")
+print(shapiro_test_conflicts)
+```
+
+**Interpretación:**
+El p-valor es extremadamente bajo (mucho menor que $\alpha = 0.05$). Esto nos lleva a **rechazar la hipótesis nula** de normalidad. Se sugiere que la variable `Conflicts_Over_Social_Media` **no sigue una distribución normal**.
+
+### **Visualización de la Normalidad**
+
+Las visualizaciones son cruciales para complementar las pruebas estadísticas.
+
+#### **a) Histograma con Curva de Densidad Normal Superpuesta**
+
+```{r fig.width=10, fig.height=6}
+# Calcular la densidad de la distribución normal teórica
+x_vals_conflicts <- seq(min(conflicts_data), max(conflicts_data), length.out = 100)
+normal_density_conflicts <- dnorm(x_vals_conflicts, mean = mean(conflicts_data), sd = sd(conflicts_data))
+
+# Escalar la densidad normal para que se ajuste a la altura del histograma
+hist_info_conflicts <- hist(conflicts_data, plot = FALSE, breaks = seq(min(conflicts_data)-0.5, max(conflicts_data)+0.5, by = 1))
+hist_max_freq_conflicts <- max(hist_info_conflicts$counts)
+hist_max_density_conflicts <- max(hist_info_conflicts$density)
+scale_factor_conflicts <- hist_max_freq_conflicts / hist_max_density_conflicts
+
+# Crear el histograma
+hist(conflicts_data,
+     main = "Distribución de Conflictos por Redes Sociales con Curva Normal Superpuesta",
+     xlab = "Número de Conflictos",
+     ylab = "Frecuencia",
+     col = "lightsalmon",
+     border = "black",
+     breaks = seq(min(conflicts_data)-0.5, max(conflicts_data)+0.5, by = 1),
+     freq = TRUE
+     )
+
+# Añadir la curva de densidad normal escalada
+lines(x_vals_conflicts, normal_density_conflicts * scale_factor_conflicts, col = "darkgreen", lwd = 2)
+legend("topright", legend = "Curva Normal Teórica", col = "darkgreen", lwd = 2)
+```
+
+**Interpretación:**
+
+El histograma con la curva normal superpuesta muestra claramente que la distribución de `Conflicts_Over_Social_Media` no se ajusta a una distribución normal. La distribución es discreta, sesgada a la derecha y con una forma muy diferente a la de campana.
+
+#### b) Gráfico Cuantil-Cuantil (Q-Q Plot)
+
+```{r fig.width=8, fig.height=8}
+# Crear un Q-Q plot
+qqnorm(conflicts_data, main = "Q-Q Plot de Conflictos por Redes Sociales")
+qqline(conflicts_data, col = "red", lwd = 2)
+```
+
+**Interpretación:**
+
+El Q-Q plot de la variable `Conflicts_Over_Social_Media` muestra una desviación muy pronunciada y escalonada de la línea diagonal, lo que es una fuerte indicación de no normalidad. La forma de "escalera" es típica de datos discretos que no siguen una distribución normal.
+
+### **Conclusión del Análisis Completo de 'Conflicts\_Over\_Social\_Media'**
+
+La variable `Conflicts_Over_Social_Media` es una variable de conteo que indica el número de conflictos, con una media de aproximadamente `r conflicts_mean`.
+
+  * **Distribución de Poisson:** La **media (`r conflicts_mean`) y la varianza (`r conflicts_variance`) son muy cercanas**, lo que sugiere que la distribución de Poisson podría ser un modelo **razonable** para esta variable. La pequeña diferencia (varianza ligeramente mayor que la media) podría indicar una ligera sobredispersión, pero la aproximación de Poisson es plausible para muchos propósitos.
+  * **Normalidad:** Las pruebas estadísticas (Shapiro-Wilk y Lilliefors) y las visualizaciones (histograma y Q-Q plot) concluyen de manera consistente que **esta variable no sigue una distribución normal**. La distribución es discreta, sesgada a la derecha y su forma es muy diferente a la de campana.
+
+Por lo tanto, para análisis inferenciales que involucren `Conflicts_Over_Social_Media`, se recomienda considerar modelos basados en la **distribución de Poisson** (o sus extensiones como la regresión binomial negativa si la sobredispersión es significativa) en lugar de métodos que asuman normalidad.
+
+
+---
+
+## **9. Análisis de la Variable 'Avg\_Time\_Between\_Usage\_Min'**
+
+Este análisis explorará la distribución y características de la variable `Avg_Time_Between_Usage_Min` (Tiempo promedio entre usos de redes sociales en minutos). Esta es una variable cuantitativa continua (tiempo), y la analizaremos mediante estadísticas descriptivas, visualizaciones y pruebas de normalidad. También consideraremos la aplicabilidad de la distribución exponencial, dado que modela tiempos entre eventos.
+
+### **Obtención de Estadísticas Descriptivas**
+
+```{r}
+# Extraer la columna 'Avg_Time_Between_Usage_Min'
+time_between_usage_data <- df$Avg_Time_Between_Usage_Min
+
+# Calcular estadísticas descriptivas
+time_between_usage_summary <- summary(time_between_usage_data)
+time_between_usage_mean <- mean(time_between_usage_data)
+time_between_usage_min <- time_between_usage_summary["Min."]
+time_between_usage_max <- time_between_usage_summary["Max."]
+time_between_usage_25th <- time_between_usage_summary["1st Qu."]
+time_between_usage_75th <- time_between_usage_summary["3rd Qu."]
+time_between_usage_sd <- sd(time_between_usage_data)
+time_between_usage_median <- median(time_between_usage_data)
+time_between_usage_mean <- mean(time_between_usage_data) # Calcular la media explícitamente para Exponencial
+
+cat("--- Estadísticas Descriptivas para Avg_Time_Between_Usage_Min ---\n")
+print(time_between_usage_summary)
+cat(paste("Media (mean):", round(time_between_usage_mean, 4), "\n"))
+cat(paste("Desviación Estándar (sd):", round(time_between_usage_sd, 4), "\n"))
+cat(paste("Mediana:", round(time_between_usage_median, 4), "\n"))
+cat(paste("Tamaño de la muestra (N):", length(time_between_usage_data), "\n"))
+```
+
+**Interpretación:**
+
+El tiempo promedio que transcurre entre usos de redes sociales es de aproximadamente `r time_between_usage_mean` minutos (poco más de una hora), con una mediana de `r time_between_usage_median` minutos. Hay una dispersión considerable en los datos, como lo indica la desviación estándar de `r time_between_usage_sd` minutos. Los tiempos varían desde un mínimo de `r time_between_usage_min` minutos hasta un máximo de `r time_between_usage_max` minutos (3 horas). El 50% central de los encuestados reporta tiempos entre `r time_between_usage_25th` y `r time_between_usage_75th` minutos.
+
+### **Visualización Descriptiva**
+
+A continuación, se presentan un histograma y un diagrama de caja (box plot) para visualizar la distribución del tiempo entre usos.
+
+#### **a) Histograma de Tiempo Promedio entre Usos**
+
+```{r fig.width=10, fig.height=6}
+hist(time_between_usage_data,
+     main = "Distribución de Tiempo Promedio entre Usos de Redes Sociales",
+     xlab = "Tiempo (minutos)",
+     ylab = "Frecuencia",
+     col = "lightseagreen",
+     border = "black",
+     breaks = 15 # Ajustar breaks para una mejor visualización
+     )
+```
+
+**Interpretación:**
+
+El histograma muestra que la mayoría de los encuestados reportan tiempos más cortos entre usos (concentración en los valores inferiores) y una cola larga hacia la derecha, indicando que hay menos encuestados con tiempos muy largos entre usos. La distribución está claramente sesgada a la derecha.
+
+#### **b) Diagrama de Caja (Box Plot) de Tiempo Promedio entre Usos**
+
+```{r fig.width=8, fig.height=6}
+boxplot(time_between_usage_data,
+        main = "Diagrama de Caja de Tiempo Promedio entre Usos de Redes Sociales",
+        ylab = "Tiempo (minutos)",
+        col = "darkgoldenrod1",
+        border = "sienna",
+        horizontal = FALSE # Para que sea vertical
+        )
+```
+
+**Interpretación:**
+
+El diagrama de caja confirma el sesgo positivo (hacia la derecha) de la distribución, con la mediana más cercana al primer cuartil. Se observan varios valores atípicos en el extremo superior, que corresponden a encuestados con tiempos significativamente más largos entre usos en comparación con la mayoría.
+
+### **Consideración de la Distribución Exponencial**
+
+La distribución exponencial es comúnmente utilizada para modelar el tiempo hasta que ocurre un evento, o el tiempo entre eventos en un proceso de Poisson. Se caracteriza por su parámetro de **tasa ($\lambda$)**, donde la media de la distribución es $1/\lambda$.
+
+  * **Media ($\mu$):** `r time_between_usage_mean` minutos.
+  * **Parámetro de tasa ($\lambda$):** Para una distribución exponencial, $\lambda = 1 / \mu$.
+      * $\lambda = 1 / `r time_between_usage_mean` \approx 0.01583$
+
+La desviación estándar de una distribución exponencial es también $1/\lambda$, es decir, igual a la media. En nuestros datos, la media (`r time_between_usage_mean`) es bastante diferente de la desviación estándar (`r time_between_usage_sd`), lo que sugiere que una distribución exponencial estricta podría no ser el mejor ajuste, aunque la forma general del histograma (sesgada a la derecha) es consistente con ella.
+
+#### **Superposición de Curva de Densidad Exponencial:**
+
+```{r fig.width=10, fig.height=6}
+# Calcular la densidad de la distribución exponencial teórica
+x_vals_exp <- seq(min(time_between_usage_data), max(time_between_usage_data), length.out = 100)
+exponential_density <- dexp(x_vals_exp, rate = 1 / mean(time_between_usage_data))
+
+# Crear el histograma con frecuencias
+hist_info_exp <- hist(time_between_usage_data, plot = FALSE, breaks = 15)
+hist_max_freq_exp <- max(hist_info_exp$counts)
+hist_max_density_exp <- max(hist_info_exp$density)
+scale_factor_exp <- hist_max_freq_exp / hist_max_density_exp
+
+hist(time_between_usage_data,
+     main = "Histograma con Curva de Densidad Exponencial Superpuesta",
+     xlab = "Tiempo (minutos)",
+     ylab = "Frecuencia",
+     col = "lightseagreen",
+     border = "black",
+     breaks = 15,
+     freq = TRUE
+     )
+
+lines(x_vals_exp, exponential_density * scale_factor_exp, col = "darkviolet", lwd = 2)
+legend("topright", legend = "Curva Exponencial Teórica", col = "darkviolet", lwd = 2)
+```
+
+**Interpretación de la Superposición:**
+
+La curva de densidad exponencial superpuesta captura la forma general sesgada a la derecha de la distribución, pero el ajuste no es perfecto, especialmente en los picos y valles del histograma real. Esto sugiere que, si bien la forma es similar, los datos reales no se distribuyen exactamente según un modelo exponencial simple.
+
+### **Pruebas de Normalidad**
+
+Aunque la hipótesis principal es la Exponencial, evaluamos la "normalidad" para descartarla o confirmar su no aplicabilidad.
+
+#### **a) Prueba de Shapiro-Wilk**
+
+```{r}
+# Prueba de Shapiro-Wilk
+shapiro_test_time <- shapiro.test(time_between_usage_data)
+cat("--- Prueba de Shapiro-Wilk para Avg_Time_Between_Usage_Min ---\n")
+print(shapiro_test_time)
+```
+
+**Interpretación:**
+
+El p-valor es extremadamente bajo (mucho menor que $\alpha = 0.05$). Esto nos lleva a **rechazar la hipótesis nula** de normalidad. Se sugiere que la variable `Avg_Time_Between_Usage_Min` **no sigue una distribución normal**.
+
+### **Visualización de la Normalidad**
+
+Las visualizaciones son cruciales para complementar las pruebas estadísticas.
+
+#### **a) Histograma con Curva de Densidad Normal Superpuesta**
+
+```{r fig.width=10, fig.height=6}
+# Calcular la densidad de la distribución normal teórica
+x_vals_norm_time <- seq(min(time_between_usage_data), max(time_between_usage_data), length.out = 100)
+normal_density_norm_time <- dnorm(x_vals_norm_time, mean = mean(time_between_usage_data), sd = sd(time_between_usage_data))
+
+# Escalar la densidad normal para que se ajuste a la altura del histograma
+hist_info_norm_time <- hist(time_between_usage_data, plot = FALSE, breaks = 15)
+hist_max_freq_norm_time <- max(hist_info_norm_time$counts)
+hist_max_density_norm_time <- max(hist_info_norm_time$density)
+scale_factor_norm_time <- hist_max_freq_norm_time / hist_max_density_norm_time
+
+# Crear el histograma
+hist(time_between_usage_data,
+     main = "Distribución de Tiempo Promedio entre Usos con Curva Normal Superpuesta",
+     xlab = "Tiempo (minutos)",
+     ylab = "Frecuencia",
+     col = "lightseagreen",
+     border = "black",
+     breaks = 15,
+     freq = TRUE
+     )
+
+# Añadir la curva de densidad normal escalada
+lines(x_vals_norm_time, normal_density_norm_time * scale_factor_norm_time, col = "red", lwd = 2)
+legend("topright", legend = "Curva Normal Teórica", col = "red", lwd = 2)
+```
+
+**Interpretación:**
+
+El histograma con la curva normal superpuesta muestra que la distribución de `Avg_Time_Between_Usage_Min` está fuertemente sesgada a la derecha y no se parece en absoluto a una distribución normal. La curva normal es simétrica y no captura la forma de los datos.
+
+#### **b) Gráfico Cuantil-Cuantil (Q-Q Plot)**
+
+```{r fig.width=8, fig.height=8}
+# Crear un Q-Q plot
+qqnorm(time_between_usage_data, main = "Q-Q Plot de Tiempo Promedio entre Usos")
+qqline(time_between_usage_data, col = "blue", lwd = 2)
+```
+
+**Interpretación:**
+
+El Q-Q plot de la variable `Avg_Time_Between_Usage_Min` muestra una desviación muy pronunciada de la línea diagonal, lo que es una fuerte indicación de no normalidad. La forma curva y cóncava es típica de distribuciones sesgadas a la derecha.
+
+### **Conclusión del Análisis Completo de 'Avg\_Time\_Between\_Usage\_Min'**
+
+La variable `Avg_Time_Between_Usage_Min` representa el tiempo promedio entre usos de redes sociales, con una media de `r mean(time_between_usage_data)` minutos y una fuerte concentración en valores más bajos.
+
+  * **Distribución Exponencial:** Aunque el histograma muestra una forma sesgada a la derecha consistente con una distribución exponencial, la **desviación estándar (`r sd(time_between_usage_data)`) no es igual a la media (`r mean(time_between_usage_data)`)**, lo que sugiere que los datos no se ajustan perfectamente a un modelo exponencial puro. Podría ser una distribución exponencial modificada o una combinación de factores.
+  * **Normalidad:** Las pruebas estadísticas (Shapiro-Wilk) y las visualizaciones (histograma con curva normal y Q-Q plot) concluyen de manera consistente que **esta variable no sigue una distribución normal**.
+
+Por lo tanto, para análisis inferenciales que involucren `Avg_Time_Between_Usage_Min`, se debe tener precaución. Aunque la distribución exponencial es una hipótesis razonable por la naturaleza de la variable (tiempo entre eventos), su ajuste perfecto no está confirmado.
+
+
+---
+
+## **10. Análisis de la Variable 'Most\_Used\_Platform'**
+
+Este análisis explorará la distribución y características de la variable `Most_Used_Platform` (Plataforma de Red Social Más Usada). Esta es una variable cualitativa nominal, por lo que nos centraremos en las frecuencias y proporciones de sus categorías.
+
+### **Frecuencias y Proporciones de 'Most\_Used\_Platform'**
+
+```{r}
+# Extraer la columna 'Most_Used_Platform'
+platform_data <- df$Most_Used_Platform
+
+# Limpiar y estandarizar los datos (convertir a minúsculas, quitar espacios y corregir posibles variaciones)
+platform_data <- tolower(trimws(platform_data))
+
+# Convertir a factor para un mejor manejo de categorías
+platform_data <- factor(platform_data)
+
+cat("--- Resumen de la Variable Most_Used_Platform ---\n")
+print(summary(platform_data))
+cat("\n")
+
+# Calcular la tabla de frecuencias
+platform_counts <- table(platform_data)
+cat("Frecuencias Absolutas:\n")
+print(platform_counts)
+cat("\n")
+
+# Calcular las proporciones (frecuencias relativas)
+platform_proportions <- prop.table(platform_counts)
+cat("Frecuencias Relativas (Proporciones):\n")
+print(platform_proportions)
+cat("\n")
+
+# Calcular el número total de encuestados
+total_respondents <- length(platform_data)
+cat(paste("Número total de encuestados:", total_respondents, "\n"))
+```
+
+**Interpretación:**
+
+De un total de `r total_respondents` encuestados:
+
+  * **Instagram** es la plataforma más usada (`r platform_counts["instagram"]` encuestados, `r platform_proportions["instagram"]`%).
+  * Le sigue **TikTok** (`r platform_counts["tiktok"]` encuestados, `r platform_proportions["tiktok"]`%).
+  * **Facebook** en tercer lugar (`r platform_counts["facebook"]` encuestados, `r platform_proportions["facebook"]`%).
+  * **WhatsApp** en cuarto lugar (`r platform_counts["whatsapp"]` encuestados, `r platform_proportions["whatsapp"]`%).
+
+Estos resultados indican que Instagram y TikTok son las plataformas dominantes entre los encuestados, seguidas de Facebook y WhatsApp.
+
+### **Visualización: Gráfico de Barras de 'Most\_Used\_Platform'**
+
+Un gráfico de barras es la visualización más adecuada para variables cualitativas, mostrando la frecuencia o proporción de cada categoría. Se ordenarán las barras por frecuencia de forma descendente para facilitar la interpretación.
+
+```{r fig.width=10, fig.height=7}
+# Crear un data frame para ggplot2 con los conteos y ordenar
+platform_df <- as.data.frame(platform_counts)
+colnames(platform_df) <- c("Platform", "Count")
+platform_df$Platform <- reorder(platform_df$Platform, -platform_df$Count) # Ordenar por conteo descendente
+
+# Crear el gráfico de barras con ggplot2
+ggplot(platform_df, aes(x = Platform, y = Count, fill = Platform)) +
+  geom_bar(stat = "identity", color = "black") +
+  geom_text(aes(label = Count), vjust = -0.5, size = 4) + # Añadir etiquetas de conteo
+  labs(title = "Plataforma de Red Social Más Usada",
+       x = "Plataforma",
+       y = "Número de Encuestados") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5), # Centrar título
+        axis.text.x = element_text(angle = 45, hjust = 1)) # Rotar etiquetas para legibilidad
+```
+
+**Interpretación de la Visualización:**
+
+El gráfico de barras confirma visualmente que Instagram y TikTok son las plataformas más utilizadas, seguidas por Facebook y WhatsApp. La representación visual facilita la comparación directa de la popularidad de cada plataforma.
+
+### **Conclusión del Análisis de 'Most\_Used\_Platform'**
+
+La variable `Most_Used_Platform` es una variable cualitativa nominal que describe la preferencia de los encuestados por una plataforma de red social principal. El análisis revela que **Instagram y TikTok son las plataformas dominantes**, seguidas por Facebook y WhatsApp. Dada la naturaleza cualitativa nominal de la variable, no se asocia con una distribución de probabilidad paramétrica como Binomial, Poisson, Normal o Exponencial. El análisis descriptivo mediante tablas de frecuencia y gráficos de barras es el método más apropiado para entender su distribución. Esta información es valiosa para comprender el panorama de uso de redes sociales entre la población estudiada.
+
+
+---
+
+## **11. Análisis de la Variable 'How\_Many\_Platforms'**
+
+Este análisis explorará la distribución y características de la variable `How_Many_Platforms` (Cuántas plataformas de redes sociales utiliza activamente). Esta es una variable cuantitativa discreta (de conteo), y se analizará mediante estadísticas descriptivas, visualizaciones y pruebas de normalidad. También se considerará la aplicabilidad de la distribución de Poisson.
+
+### **Obtención de Estadísticas Descriptivas**
+
+```{r}
+# Extraer la columna 'How_Many_Platforms'
+platforms_count_data <- df$How_Many_Platforms
+
+# Calcular estadísticas descriptivas
+platforms_count_summary <- summary(platforms_count_data)
+platforms_count_min <- platforms_count_summary["Min."]
+platforms_count_max <- platforms_count_summary["Max."]
+platforms_count_25th <- platforms_count_summary["1st Qu."]
+platforms_count_75th <- platforms_count_summary["3rd Qu."]
+platforms_count_sd <- sd(platforms_count_data)
+platforms_count_median <- median(platforms_count_data)
+platforms_count_mean <- mean(platforms_count_data)
+platforms_count_variance <- var(platforms_count_data) # Calcular la varianza para Poisson
+
+cat("--- Estadísticas Descriptivas para How_Many_Platforms ---\n")
+print(platforms_count_summary)
+cat(paste("Media (mean):", round(platforms_count_mean, 4), "\n"))
+cat(paste("Desviación Estándar (sd):", round(platforms_count_sd, 4), "\n"))
+cat(paste("Varianza:", round(platforms_count_variance, 4), "\n")) # Mostrar varianza
+cat(paste("Mediana:", round(platforms_count_median, 4), "\n"))
+cat(paste("Tamaño de la muestra (N):", length(platforms_count_data), "\n"))
+```
+
+**Interpretación:**
+
+Los encuestados utilizan, en promedio, aproximadamente `r platforms_count_mean` plataformas de redes sociales, con una mediana de `r platforms_count_median` plataformas. La desviación estándar de `r platforms_count_sd` plataformas indica una dispersión moderada en el número de plataformas utilizadas. Los datos varían desde un mínimo de `r platforms_count_min` plataforma hasta un máximo de `r platforms_count_max` plataformas. El 50% central de los encuestados utiliza entre `r platforms_count_25th` y `r platforms_count_75th` plataformas.
+
+### **Visualización Descriptiva**
+
+A continuación, se presentan un histograma y un diagrama de caja (box plot) para visualizar la distribución del número de plataformas.
+
+#### **a) Histograma de Cuántas Plataformas**
+
+```{r fig.width=9, fig.height=6}
+hist(platforms_count_data,
+     main = "Distribución del Número de Plataformas Usadas",
+     xlab = "Número de Plataformas",
+     ylab = "Frecuencia",
+     col = "lightgreen",
+     border = "black",
+     breaks = seq(min(platforms_count_data)-0.5, max(platforms_count_data)+0.5, by = 1), # Centrar las barras en los enteros
+     freq = TRUE # Asegurarse de que el eje y sea frecuencia
+     )
+```
+
+**Interpretación:**
+
+El histograma muestra que las frecuencias más altas se encuentran en 3, 4 y 5 plataformas, con una disminución notable en el extremo izquierdo (1 y 2 plataformas). La distribución parece ser sesgada a la izquierda.
+
+#### **b) Diagrama de Caja (Box Plot) de Cuántas Plataformas**
+
+```{r fig.width=7, fig.height=7}
+boxplot(platforms_count_data,
+        main = "Diagrama de Caja del Número de Plataformas Usadas",
+        ylab = "Número de Plataformas",
+        col = "darkolivegreen3",
+        border = "darkgreen",
+        horizontal = FALSE # Para que sea vertical
+        )
+```
+
+**Interpretación:**
+
+El diagrama de caja confirma que la mayoría de los datos se concentran entre 3 y 5 plataformas, con la mediana en `r platforms_count_median`. No se observan valores atípicos significativos, lo que indica que el rango de 1 a 5 plataformas es representativo de la muestra.
+
+### **Consideración de la Distribución de Poisson**
+
+La distribución de Poisson modela el número de eventos en un intervalo, donde la media ($\lambda$) es igual a la varianza.
+
+  * **Media ($\lambda$):** `r platforms_count_mean`
+  * **Varianza:** `r platforms_count_variance`
+
+En este caso, la **media (`r platforms_count_mean`) y la varianza (`r platforms_count_variance`) son diferentes**. La varianza es significativamente menor que la media, lo que indica **subdispersión**. Por lo tanto, la distribución de Poisson **no es un modelo adecuado** para la variable `How_Many_Platforms`.
+
+### **Pruebas de Normalidad**
+
+Aunque `How_Many_Platforms` es discreta, se evalúa su "normalidad" para ver si puede ser aproximada por una distribución normal.
+
+#### **a) Prueba de Shapiro-Wilk**
+
+```{r}
+# Prueba de Shapiro-Wilk
+shapiro_test_platforms <- shapiro.test(platforms_count_data)
+cat("--- Prueba de Shapiro-Wilk para How_Many_Platforms ---\n")
+print(shapiro_test_platforms)
+```
+
+**Interpretación:**
+El p-valor es extremadamente bajo (mucho menor que $\alpha = 0.05$). Esto nos lleva a **rechazar la hipótesis nula** de normalidad. Se sugiere que la variable `How_Many_Platforms` **no sigue una distribución normal**.
+
+### **Visualización de la Normalidad**
+
+Las visualizaciones son cruciales para complementar las pruebas estadísticas.
+
+#### **a) Histograma con Curva de Densidad Normal Superpuesta**
+
+```{r fig.width=10, fig.height=6}
+# Calcular la densidad de la distribución normal teórica
+x_vals_platforms_norm <- seq(min(platforms_count_data), max(platforms_count_data), length.out = 100)
+normal_density_platforms_norm <- dnorm(x_vals_platforms_norm, mean = mean(platforms_count_data), sd = sd(platforms_count_data))
+
+# Escalar la densidad normal para que se ajuste a la altura del histograma
+hist_info_platforms_norm <- hist(platforms_count_data, plot = FALSE, breaks = seq(min(platforms_count_data)-0.5, max(platforms_count_data)+0.5, by = 1))
+hist_max_freq_platforms_norm <- max(hist_info_platforms_norm$counts)
+hist_max_density_platforms_norm <- max(hist_info_platforms_norm$density)
+scale_factor_platforms_norm <- hist_max_freq_platforms_norm / hist_max_density_platforms_norm
+
+# Crear el histograma
+hist(platforms_count_data,
+     main = "Distribución del Número de Plataformas Usadas con Curva Normal Superpuesta",
+     xlab = "Número de Plataformas",
+     ylab = "Frecuencia",
+     col = "lightgreen",
+     border = "black",
+     breaks = seq(min(platforms_count_data)-0.5, max(platforms_count_data)+0.5, by = 1),
+     freq = TRUE
+     )
+
+# Añadir la curva de densidad normal escalada
+lines(x_vals_platforms_norm, normal_density_platforms_norm * scale_factor_platforms_norm, col = "red", lwd = 2)
+legend("topright", legend = "Curva Normal Teórica", col = "red", lwd = 2)
+```
+
+**Interpretación:**
+
+El histograma con la curva normal superpuesta muestra que la distribución de `How_Many_Platforms` no se ajusta bien a una distribución normal.
+
+#### **b) Gráfico Cuantil-Cuantil (Q-Q Plot)**
+
+```{r fig.width=8, fig.height=8}
+# Crear un Q-Q plot
+qqnorm(platforms_count_data, main = "Q-Q Plot del Número de Plataformas Usadas")
+qqline(platforms_count_data, col = "blue", lwd = 2)
+```
+
+**Interpretación:**
+
+El Q-Q plot de la variable `How_Many_Platforms` muestra una desviación clara y escalonada de la línea diagonal. Esta forma de "escalera" es característica de datos discretos que no se distribuyen normalmente. Los puntos no se alinean con la línea, lo que es una fuerte indicación de no normalidad.
+
+### **Conclusión del Análisis Completo de 'How_Many_Platforms'**
+
+La variable `How_Many_Platforms` es una variable de conteo que indica el número de plataformas de redes sociales utilizadas, con una media de aproximadamente `r platforms_count_mean`.
+
+  * **Distribución de Poisson:** La **media (`r platforms_count_mean`) y la varianza (`r platforms_count_variance`) son considerablemente diferentes**, con la varianza siendo menor que la media. Esto indica **subdispersión**, por lo que la distribución de Poisson **no es un modelo adecuado** para esta variable.
+  * **Normalidad:** Las pruebas estadísticas (Shapiro-Wilk) y las visualizaciones (histograma y Q-Q plot) concluyen de manera consistente que **esta variable no sigue una distribución normal**. La distribución es discreta, y su forma no se asemeja a una campana.
+
+Por lo tanto, para análisis inferenciales que involucren `How_Many_Platforms`, se debe evitar el uso de métodos que asuman una distribución normal o de Poisson estricta.
+
+
+---
+
+## **12. Análisis de la Variable 'Relationship\_Status'**
+
+Finalmente, culminan los análisis con la exploración de la distribución y características de la variable `Relationship_Status` (Estado de Relación). Esta es una variable cualitativa nominal, por lo que nos centraremos en las frecuencias y proporciones de sus categorías.
+
+### **Frecuencias y Proporciones de 'Relationship\_Status'**
+
+```{r}
+# Extraer la columna 'Relationship_Status'
+relationship_status_data <- df$Relationship_Status
+
+# Limpiar y estandarizar los datos (convertir a minúsculas y quitar espacios)
+relationship_status_data <- tolower(trimws(relationship_status_data))
+
+# Convertir a factor para un mejor manejo de categorías
+relationship_status_data <- factor(relationship_status_data)
+
+cat("--- Resumen de la Variable Relationship_Status ---\n")
+print(summary(relationship_status_data))
+cat("\n")
+
+# Calcular la tabla de frecuencias
+relationship_status_counts <- table(relationship_status_data)
+cat("Frecuencias Absolutas:\n")
+print(relationship_status_counts)
+cat("\n")
+
+# Calcular las proporciones (frecuencias relativas)
+relationship_status_proportions <- prop.table(relationship_status_counts)
+cat("Frecuencias Relativas (Proporciones):\n")
+print(relationship_status_proportions)
+cat("\n")
+
+# Calcular el número total de encuestados
+total_respondents <- length(relationship_status_data)
+cat(paste("Número total de encuestados:", total_respondents, "\n"))
+```
+
+**Interpretación:**
+
+De un total de `r total_respondents` encuestados:
+
+  * `r relationship_status_counts["yes"]` (`r relationship_status_proportions["yes"]*100`%) se encuentran en una relación.
+  * `r relationship_status_counts["no"]` (`r relationship_status_proportions["no"]*100`%) están solteros.
+
+Esto muestra una distribución con una ligera mayoría de encuestados solteros.
+
+### **Visualización: Gráfico de Barras de 'Relationship\_Status'**
+
+Un gráfico de barras es la visualización más adecuada para variables cualitativas, mostrando la frecuencia o proporción de cada categoría. Se ordenarán las barras por frecuencia de forma descendente para facilitar la interpretación.
+
+```{r fig.width=9, fig.height=6}
+# Crear un data frame para ggplot2 con los conteos y ordenar
+relationship_status_df <- as.data.frame(relationship_status_counts)
+colnames(relationship_status_df) <- c("Status", "Count")
+relationship_status_df$Status <- reorder(relationship_status_df$Status, -relationship_status_df$Count) # Ordenar por conteo descendente
+
+# Crear el gráfico de barras con ggplot2
+ggplot(relationship_status_df, aes(x = Status, y = Count, fill = Status)) +
+  geom_bar(stat = "identity", color = "black") +
+  geom_text(aes(label = Count), vjust = -0.5, size = 4) + # Añadir etiquetas de conteo
+  labs(title = "Distribución del Estado de Relación",
+       x = "Estado de Relación",
+       y = "Número de Encuestados") +
+  scale_fill_brewer(palette = "Set2") + # Usar una paleta de colores
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5)) # Centrar título
+```
+
+**Interpretación de la Visualización:**
+
+El gráfico de barras confirma visualmente las proporciones calculadas, mostrando que el grupo "soltero" es el más grande, con diferencias no muy marcadas entre ellos.
+
+### **Conclusión del Análisis de 'Relationship\_Status'**
+
+La variable `Relationship_Status` es una variable cualitativa nominal que describe el estado de relación de los encuestados. El análisis revela que la muestra está distribuida de manera bastante uniforme entre las categorías, siendo la categoría "soltero" la más frecuente.
+
+Dada la naturaleza cualitativa nominal de esta variable, **no se le asocia una distribución de probabilidad paramétrica** (como Binomial, Poisson, Normal o Exponencial) en el sentido de modelar conteos o mediciones continuas. El análisis descriptivo mediante tablas de frecuencia y gráficos de barras es el método más apropiado para entender su distribución y composición. Esta información es útil para caracterizar la demografía de la muestra y puede ser empleada en análisis comparativos (por ejemplo, cómo el uso de redes sociales difiere entre personas con distintos estados de relación).
+
+
+---
+
+## **13. Conclusiones Generales del Análisis de Datos**
+
+Este informe ha presentado un análisis descriptivo y de distribución para las variables presentadas, con el objetivo de comprender sus características y la aplicabilidad de diferentes modelos de probabilidad. A continuación, se resumen los hallazgos para cada variable analizada:
+
+1.  **Age (Edad):**
+    * **Tipo:** Cuantitativa Continua.
+    * **Hallazgos Clave:** La edad promedio es de aproximadamente 20.68 años, con un rango estrecho (18 a 24 años) y una desviación estándar baja (1.39 años). La mediana es 21 años.
+    * **Distribución:** Las pruebas de Shapiro-Wilk y Lilliefors, junto con el histograma y el Q-Q plot, indican que la variable **no sigue una distribución normal**. La distribución es más concentrada y con colas más ligeras de lo esperado para una normal.
+
+2.  **Gender (Género):**
+    * **Tipo:** Cualitativa Nominal.
+    * **Hallazgos Clave:** La muestra está compuesta por un 49.45% de mujeres y un 50.55% de hombres.
+    * **Distribución:** Al ser nominal, **no se le asocia una distribución de probabilidad paramétrica**. Su análisis se basa en frecuencias y proporciones.
+
+3.  **Academic_Level (Nivel Académico):**
+    * **Tipo:** Cualitativa Ordinal.
+    * **Hallazgos Clave:** La muestra se distribuye de manera relativamente equitativa entre 'ed. media' (3.43%), 'universitario' (49.61%) y 'titulado' (46.95%).
+    * **Distribución:** Al ser ordinal, **no se le asocia una distribución de probabilidad paramétrica**. Su análisis se enfoca en el orden y las frecuencias.
+
+4.  **Avg_Daily_Usage_Hours (Horas Promedio de Uso Diario):**
+    * **Tipo:** Cuantitativa Continua.
+    * **Hallazgos Clave:** El promedio de uso es de 4.96 horas/día, con una mediana de 4.8 horas y una desviación estándar de 1.28 horas. El rango va de 1.5 a 8.5 horas.
+    * **Distribución:** Las pruebas de normalidad rechazan la hipótesis de que sigue una distribución normal. Las visualizaciones muestran una distribución con picos y una forma que no es de campana, sugiriendo una posible distribución multimodal o más uniforme en el centro.
+
+5.  **Affects_Academic_Performance (Afecta el Rendimiento Académico):**
+    * **Tipo:** Cualitativa Nominal (Binaria).
+    * **Hallazgos Clave:** Una mayoría significativa (65.68%) de los encuestados percibe que el uso de redes sociales afecta negativamente su rendimiento académico, mientras que el 34.32% no lo considera así.
+    * **Distribución:** La **distribución Binomial** es la más adecuada para modelar el número de "éxitos" (ej., respuestas "Sí") en un número fijo de ensayos.
+
+6.  **Sleep_Hours_Per_Night (Horas de Sueño por Noche):**
+    * **Tipo:** Cuantitativa Continua.
+    * **Hallazgos Clave:** Los encuestados duermen en promedio 6.83 horas por noche, con una mediana de 6.9 horas y una desviación estándar de 1.13 horas. El rango es de 3.8 a 9.6 horas.
+    * **Distribución:** Las pruebas de normalidad y las visualizaciones indican que la variable **no sigue una distribución normal**.
+
+7.  **Mental_Health_Score (Puntuación de Salud Mental):**
+    * **Tipo:** Cuantitativa Discreta.
+    * **Hallazgos Clave:** Las puntuaciones van de 1 a 6, con una media de 3.808 y una mediana de 4.00.
+    * **Distribución:** La **distribución de Poisson no es adecuada** debido a la subdispersión (varianza 1.2428 < media 3.808). Las pruebas de normalidad y las visualizaciones confirman que **no sigue una distribución normal**, mostrando una distribución discreta y escalonada.
+
+8.  **Conflicts_Over_Social_Media (Conflictos por Redes Sociales):**
+    * **Tipo:** Cuantitativa Discreta (Conteo).
+    * **Hallazgos Clave:** El promedio es de 2.89 conflictos, con una mediana de 3.00. El rango es de 0 a 5 conflictos. La distribución está sesgada a la derecha.
+    * **Distribución:** La **distribución de Poisson no es adecuada** debido a la subdispersión (varianza 0.908 < media 2.897). Las pruebas de normalidad y las visualizaciones confirman que **no sigue una distribución normal**.
+
+9.  **Avg_Time_Between_Usage_Min (Tiempo Promedio entre Usos en Minutos):**
+    * **Tipo:** Cuantitativa Continua (Tiempo).
+    * **Hallazgos Clave:** El tiempo promedio entre usos es de 69.61 minutos, con una mediana de 60.00 minutos y una desviación estándar de 31.49 minutos. La distribución está fuertemente sesgada a la derecha.
+    * **Distribución:** Aunque la forma es consistente con una **distribución exponencial**, la desviación estándar no es igual a la media, lo que indica que **no se ajusta perfectamente a un modelo exponencial estricto**. Las pruebas de normalidad confirman que **no sigue una distribución normal**.
+
+10. **Most_Used_Platform (Plataforma Más Usada):**
+    * **Tipo:** Cualitativa Nominal.
+    * **Hallazgos Clave:** Instagram (38.84%) y TikTok (24.02%) son las plataformas más populares, seguidas por Facebook y WhatsApp.
+    * **Distribución:** Al ser nominal, **no se le asocia una distribución de probabilidad paramétrica**. Su análisis se basa en frecuencias y gráficos de barras.
+
+11. **How_Many_Platforms (Cuántas Plataformas):**
+    * **Tipo:** Cuantitativa Discreta (Conteo).
+    * **Hallazgos Clave:** Los encuestados usan en promedio 4.305 plataformas, con una mediana de 5.00. El rango es de 1 a 5 plataformas.
+    * **Distribución:** La **distribución de Poisson no es adecuada** debido a la subdispersión (varianza 1.243 < media 4.305). Las pruebas de normalidad y las visualizaciones confirman que **no sigue una distribución normal**.
+
+12. **Relationship_Status (Estado de Relación):**
+    * **Tipo:** Cualitativa Nominal.
+    * **Hallazgos Clave:** La muestra se distribuye de forma relativamente uniforme entre 'en una relacion' (44.62%) y 'soltero' (55.38%).
+    * **Distribución:** Al ser nominal, **no se le asocia una distribución de probabilidad paramétrica**. Su análisis se basa en frecuencias y proporciones.
+
+---
+
+**Implicaciones Generales para Futuros Análisis:**
+
+Este análisis exhaustivo revela que **las variables cuantitativas en este dataset no siguen una distribución normal**. Esto es un hallazgo importante, ya que muchos métodos estadísticos paramétricos (como pruebas t, ANOVA, regresión lineal simple) asumen normalidad.
+
+Para análisis futuros, se recomienda:
+
+* **Priorizar métodos no paramétricos** para comparar grupos o analizar relaciones, especialmente para variables como `Age`, `Avg_Daily_Usage_Hours`, `Sleep_Hours_Per_Night`, `Mental_Health_Score`, `How_Many_Platforms` y `Avg_Time_Between_Usage_Min`.
+* Considerar **transformaciones de datos** (ej., logarítmicas) para intentar aproximar la normalidad en variables continuas sesgadas, si es estrictamente necesario para un modelo específico.
+* Para variables de conteo como `Conflicts_Over_Social_Media` (y potencialmente `Mental_Health_Score` o `How_Many_Platforms` con modelos más complejos), explorar **modelos de regresión específicos para conteos** (ej., regresión de Poisson o binomial negativa) que no asumen normalidad y pueden manejar la sobredispersión o subdispersión.
+* Las variables cualitativas (`Gender`, `Academic_Level`, `Affects_Academic_Performance`, `Most_Used_Platform`, `Relationship_Status`) se analizarán mejor mediante **tablas de contingencia, pruebas de chi-cuadrado** o modelos logísticos, dependiendo de las preguntas de investigación.
+
+En resumen, el dataset proporciona una rica información sobre el uso de redes sociales y sus correlaciones percibidas, pero su naturaleza no normal para muchas variables cuantitativas exige un enfoque cuidadoso y la selección de herramientas estadísticas apropiadas para garantizar la validez de cualquier inferencia.
+
+---
+
+**Nota:** Este análisis se basa en un conjunto de datos simulado y no debe considerarse representativo de una población real. Los resultados son ilustrativos y deben interpretarse con precaución en contextos reales. 
+
+*Dataset basado en "[Students' Social Media Addiction](https://www.kaggle.com/datasets/adilshamim8/social-media-addiction-vs-relationships)"*
